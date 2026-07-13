@@ -1,12 +1,19 @@
-import pyttsx3
-import speech_recognition as sr
-import mtranslate
 import datetime
 from datetime import date
 
+import mtranslate
+import pyttsx3
+import speech_recognition as sr
+
+try:
+    import pyaudio  # noqa: F401
+except ImportError:  # pragma: no cover - runtime dependency guard
+    pyaudio = None
+
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id)
+if voices:
+    engine.setProperty('voice', voices[0].id)
 engine.setProperty('rate', 175)
 
 
@@ -18,12 +25,20 @@ def speak(audio):
 
 
 def command():
+    if pyaudio is None:
+        print("PyAudio is not installed. Please install it before using speech input.")
+        return ""
+
     content = " "
     while content == " ":
         r = sr.Recognizer()
-        with sr.Microphone() as source:
-            print("listening...")
-            audio = r.listen(source)
+        try:
+            with sr.Microphone() as source:
+                print("listening...")
+                audio = r.listen(source)
+        except OSError as exc:
+            print(f"Microphone error: {exc}")
+            return ""
         try:
             print("recognizing...")
             content = r.recognize_google(audio, language='en-in')
@@ -31,7 +46,8 @@ def command():
         except Exception as e:
             print(e)
             print("say that again please...")
-            return "content"
+            return ""
+    return content
         
 
 def time():
@@ -41,6 +57,8 @@ def time():
 def main_proccess():
     while True:
         request = command()
+        if not request:
+            continue
         if "wake up" in request:
             speak("yess boss! it's  me  your  assistant.How  can  i help  you?")
         elif "sleep" in request:
@@ -51,6 +69,7 @@ def main_proccess():
         elif "what's the date" in request:
             today = date.today()
             speak("Today's date is " + str(today))
-        
 
-main_proccess()
+
+if __name__ == "__main__":
+    main_proccess()
