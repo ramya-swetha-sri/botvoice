@@ -12,16 +12,43 @@ except ImportError:  # pragma: no cover - runtime dependency guard
 
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
-if voices:
+
+preferred_voice_ids = [
+    'com.apple.voice.compact.en-US.Samantha',
+    'com.apple.voice.compact.en-GB.Susan',
+    'com.apple.voice.compact.en-US.Ava',
+    'com.apple.voice.compact.en-IE.Moira',
+    'com.apple.voice.compact.en-US.Jane',
+    'com.apple.voice.compact.en-US.Emma',
+    'com.apple.voice.compact.en-US.Alex',
+]
+
+selected_voice_id = None
+for voice in voices:
+    if voice.id in preferred_voice_ids:
+        selected_voice_id = voice.id
+        break
+
+if selected_voice_id:
+    engine.setProperty('voice', selected_voice_id)
+elif voices:
     engine.setProperty('voice', voices[0].id)
+
 engine.setProperty('rate', 175)
 
 
 def speak(audio):
-    audio = mtranslate.translate(audio, to_language="en" , from_language="en-in")
+    try:
+        audio = mtranslate.translate(audio, to_language="en", from_language="en-in")
+    except Exception as exc:
+        print(f"Translation warning: {exc}")
+
     print(audio)
-    engine.say(audio)
-    engine.runAndWait()
+    try:
+        engine.say(audio)
+        engine.runAndWait()
+    except Exception as exc:
+        print(f"Speech error: {exc}")
 
 
 def command():
