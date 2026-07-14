@@ -4,6 +4,7 @@ from datetime import date
 import mtranslate
 import pyttsx3
 import speech_recognition as sr
+import pyautogui
 
 try:
     import pyaudio  # noqa: F401
@@ -96,6 +97,17 @@ def main_proccess():
         elif "what's the date" in request:
             today = date.today()
             speak("Today's date is " + str(today))
+            speak("Message sent")
+        elif "open" in request:
+            query = request.replace("open", "").strip()
+            pyautogui.press("super")
+            pyautogui.typewrite(query)
+            pyautogui.sleep(2)
+            pyautogui.press("enter")
+            speak("Opening " + query)
+        elif "close" in request:
+            pyautogui.hotkey('alt', 'F4')
+            speak("Closing")
 
 
 if __name__ == "__main__":
