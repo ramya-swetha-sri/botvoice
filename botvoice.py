@@ -5,12 +5,12 @@ import mtranslate
 import pyttsx3
 import speech_recognition as sr
 import pyautogui
+import wikipedia 
 
 try:
     import pyaudio  # noqa: F401
 except ImportError:  # pragma: no cover - runtime dependency guard
     pyaudio = None
-
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 
@@ -104,6 +104,10 @@ def main_proccess():
         elif "decrease volume" in request:
             speak("Decreasing volume")
             pyautogui.press("volumedown")
+        elif "wikipedia" in request:
+            request = request.replace("search wikipedia", "")
+            result = wikipedia.summary(request, sentences=2)
+            speak(result)
         elif "open" in request:
             query = request.replace("open", "").strip()
             pyautogui.press("super")
