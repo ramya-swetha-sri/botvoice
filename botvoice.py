@@ -98,6 +98,12 @@ def main_proccess():
             today = date.today()
             speak("Today's date is " + str(today))
             speak("Message sent")
+        elif "increase volume" in request:
+            speak("Increasing volume")
+            pyautogui.press("volumeup")
+        elif "decrease volume" in request:
+            speak("Decreasing volume")
+            pyautogui.press("volumedown")
         elif "open" in request:
             query = request.replace("open", "").strip()
             pyautogui.press("super")
@@ -106,7 +112,7 @@ def main_proccess():
             pyautogui.press("enter")
             speak("Opening " + query)
         elif "close" in request:
-            pyautogui.hotkey('alt', 'F4')
+            pyautogui.hotkey('cmd', 'w')
             speak("Closing")
 
 
